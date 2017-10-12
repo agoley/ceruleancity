@@ -1,0 +1,1 @@
+var jooCarousel = new JooCarousel(document.getElementsByClassName('animate'));
