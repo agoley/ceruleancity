@@ -1,1 +1,1 @@
-var jooCarousel = new JooCarousel(document.getElementsByClassName('animate'));
+var carousel = new CeruleanCarousel(document.getElementsByClassName('animate'));

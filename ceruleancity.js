@@ -1,6 +1,6 @@
 /**
  * CERULEANCITY JS
- * CERULEANCITY is a light JavaScript Library for data binding and common web interfaces. Compatible with most browsers.
+ * CERULEANCITY is a light JavaScript Framework for data binding and common web interfaces. Compatible with most browsers.
  * 
  * DEPENDENCIES
  * 1. palletetownJS
@@ -12,10 +12,17 @@
 var ceruleancity = {}; // Initialize the ceruleancity object.
 
 // CLASSES
-class JooCarousel {
-    constructor(mems) {
+class CeruleanCarousel {
 
-        this.members = mems; // members: Element[] - all members must share the same parent.
+    /**
+     * 
+     * @param { HTMLElement[] } mems - Members of the carousel. Each must share the same parent and have position set to absolute.
+     * @param { Function } callback - Function to be called on each turn.
+     */
+    constructor(mems, callback) {
+
+        this.members = mems;
+        this.callback = callback;        
         this.currId = 0; // currId: number
         this.paused = false; // paused: boolean
     }
@@ -52,6 +59,7 @@ class JooCarousel {
             var me = that;
             setTimeout(function () {
                 if (!me.paused) {
+                    if (me.callback) me.callback().apply(me); // Pass the object into the callback.
                     next.apply(me);
                 }
             }, milliseconds);
