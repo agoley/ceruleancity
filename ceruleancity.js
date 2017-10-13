@@ -17,22 +17,45 @@ class CeruleanCarousel {
     /**
      * 
      * @param { HTMLElement[] } mems - Members of the carousel. Each must share the same parent and have position set to absolute.
+     * @param { number } milliseconds- Time to wait for each turn.
      * @param { Function } callback - Function to be called on each turn.
+     * @param { boolean } auto - If true auto starts the carousel. Defaults to true.
      */
-    constructor(mems, callback) {
-
+    constructor(mems, milliseconds, callback, auto) {
         this.members = mems;
-        this.callback = callback;        
+        this.callback = callback;
+        this.milliseconds = milliseconds;
+        this.auto = auto;
+
         this.currId = 0; // currId: number
         this.paused = false; // paused: boolean
+        this.originalOffsetLeft = this.members[0].offsetLeft;
+
+        var that = this;
+        // Starts the carousel based on auto parameter.
+        this.automatic();
+
+        // Handle window focus.
+        window.onblur = function () { that.stop() }; // Stop on blur.
+        window.onfocus = function () { that.automatic() }; // Start on focus.
     }
 
     goTo(id) {
+        this.stop();
+        
+        var currEl = this.members[this.currId];
+        var targetMember = this.members[id];
 
-        // TODO
+        this.currId = id;
+        targetMember.style.top = currEl.clientTop + 'px';
+        targetMember.style.left = this.originalOffsetLeft + 'px';
+        currEl.style.top = currEl.clientTop + 'px';
+        currEl.style.left = currEl.clientWidth + 'px';
+
+        setTimeout( this.automatic(), this.milliseconds * 2);
     }
 
-    start(milliseconds) {
+    start() {
         if (!palletetown) {
             console.error('ceruleancity: missing dependency palletetown.js');
             return;
@@ -59,18 +82,32 @@ class CeruleanCarousel {
             var me = that;
             setTimeout(function () {
                 if (!me.paused) {
-                    if (me.callback) me.callback().apply(me); // Pass the object into the callback.
+                    if (me.callback) me.callback(me); // Pass the object into the callback.
                     next.apply(me);
+                } else {
+                    return;
                 }
-            }, milliseconds);
+            }, me.milliseconds);
         }
 
         var that = this;
+        if (that.callback) that.callback(that); // Pass the object into the callback.
         next.apply(that);
     }
 
     stop() {
         this.paused = true;
+    }
+
+    automatic() {
+        var autostart = (typeof this.auto === 'undefined') ? true : this.auto;
+        var that = this;
+        if (autostart) {
+            // Auto start the carousel
+            setTimeout(function () {
+                that.start()
+            }, that.milliseconds)
+        }
     }
 }
 
