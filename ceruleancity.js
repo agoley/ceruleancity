@@ -39,7 +39,7 @@ class CeruleanCarousel {
         var waitTime = (that.milliseconds * 2);
         // Handle window focus.
         window.onblur = function () { that.stop() }; // Stop on blur.
-        window.onfocus = function () { setTimeout(that.automatic(), waitTime) }// Start on focus.
+        window.onfocus = function () { that.automatic() }// Start on focus.
     }
 
     goTo(id, callback) {
