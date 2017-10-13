@@ -42,26 +42,43 @@ class CeruleanCarousel {
         window.onfocus = function () { setTimeout(that.automatic(), waitTime) }// Start on focus.
     }
 
-    goTo(id) {
-        this.stop();
+    goTo(id, callback) {
+        if (this.currId === id) return;
 
         var currEl = this.members[this.currId];
         var targetMember = this.members[id];
-        this.currId = id;
-        
-        targetMember.style.top = currEl.clientTop + 'px';
-        targetMember.style.left = this.originalOffsetLeft + 'px';
 
-        currEl.style.top = currEl.clientTop + 'px';
-        currEl.style.left = currEl.clientWidth + 'px';
-        
-        this.automatic();
+        // Don't do anything if the current element is moving.
+        var x1 = currEl.style.left;
+        var that = this;
+        setTimeout(function () {
+            var x2 = currEl.style.left;
+
+            if (x1 != x2) {
+                return;
+            } else {
+                that.stop();
+                
+                that.currId = id;
+
+                targetMember.style.top = currEl.clientTop + 'px';
+                targetMember.style.left = that.originalOffsetLeft + 'px';
+
+                currEl.style.top = currEl.clientTop + 'px';
+                currEl.style.left = currEl.clientWidth + 'px';
+
+                callback(id);
+                that.automatic();
+            }
+
+        }, 10);
+    
     }
 
     start() {
         if (this.isRunning) {
             return;
-        } 
+        }
         if (!palletetown) {
             console.error('ceruleancity: missing dependency palletetown.js');
             return;

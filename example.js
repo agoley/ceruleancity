@@ -14,11 +14,14 @@ function adjust(me) {
 }
 
 function go(id) {
-    var carouselBtns = document.getElementsByClassName('carousel-btn');
-    for (var i = 0; i < carouselBtns.length; i++) {
-        carouselBtns[i].classList.remove('active-btn');
+
+    var callback = function (id) {
+        var carouselBtns = document.getElementsByClassName('carousel-btn');
+        for (var i = 0; i < carouselBtns.length; i++) {
+            carouselBtns[i].classList.remove('active-btn');
+        }
+        carouselBtns[id].classList.add('active-btn');        
     }
 
-    carouselBtns[id].classList.add('active-btn');
-    carousel.goTo(id);
+    carousel.goTo(id, callback);
 }
