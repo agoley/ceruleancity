@@ -30,37 +30,44 @@ class CeruleanCarousel {
         this.currId = 0; // currId: number
         this.paused = false; // paused: boolean
         this.originalOffsetLeft = this.members[0].offsetLeft;
+        this.isRunning = false;
 
         var that = this;
         // Starts the carousel based on auto parameter.
-        this.automatic();
+        setTimeout(that.automatic(), milliseconds);
 
+        var waitTime = (that.milliseconds * 2);
         // Handle window focus.
         window.onblur = function () { that.stop() }; // Stop on blur.
-        window.onfocus = function () { that.automatic() }; // Start on focus.
+        window.onfocus = function () { setTimeout(that.automatic(), waitTime) }// Start on focus.
     }
 
     goTo(id) {
         this.stop();
-        
+
         var currEl = this.members[this.currId];
         var targetMember = this.members[id];
-
         this.currId = id;
+        
         targetMember.style.top = currEl.clientTop + 'px';
         targetMember.style.left = this.originalOffsetLeft + 'px';
+
         currEl.style.top = currEl.clientTop + 'px';
         currEl.style.left = currEl.clientWidth + 'px';
-
-        setTimeout( this.automatic(), this.milliseconds * 2);
+        
+        this.automatic();
     }
 
     start() {
+        if (this.isRunning) {
+            return;
+        } 
         if (!palletetown) {
             console.error('ceruleancity: missing dependency palletetown.js');
             return;
         }
         this.paused = false;
+        this.isRunning = true;
 
         // Function to progress the carousel.
         var next = function () {
@@ -85,6 +92,7 @@ class CeruleanCarousel {
                     if (me.callback) me.callback(me); // Pass the object into the callback.
                     next.apply(me);
                 } else {
+                    me.isRunning = false;
                     return;
                 }
             }, me.milliseconds);
