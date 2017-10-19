@@ -152,12 +152,12 @@ function SparkIf(element, viewable) {
 
     this.hide = function() {
         this.viewable = false;
-        this.el.style.display = none;
+        this.element.style.display = 'none';
     }
 
     this.show = function() {
         this.viewable = true;
-        this.el.style.display = this.display;
+        this.element.style.display = this.display;
     }
 
     this.reconcile = function() {
